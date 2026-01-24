@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Access Portal</title>
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+    }
+    .box {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Nhập mật khẩu</h2>
+  <input type="password" id="password" placeholder="Password">
+  <br>
+  <button onclick="checkPassword()">Vào trang lớp học</button>
+  <div id="error" class="error"></div>
+</div>
+
+<script>
+  // hash của 
+  const PASSWORD_HASH = "6950e534268a0c6091ecce7a3c9edf6bb9b0b6edc8882bcee965830d3c68c675";
+
+  async function sha256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map(b => b.toString(16).padStart(2, "0"))
+      .join("");
+  }
+
+  async function checkPassword() {
+    const input = document.getElementById("password").value;
+    const hash = await sha256(input);
+
+    if (hash === PASSWORD_HASH) {
+      sessionStorage.setItem("authorized", "true");
+      window.location.href = "https://ketng91.github.io/khoathpt/";
+    } else {
+      document.getElementById("error").innerText = "Sai mật khẩu!";
+    }
+  }
+
+  // nếu đã nhập đúng trước đó thì tự vào
+if (sessionStorage.getItem("authorized") === "true") {
+    window.location.href = "https://ketng91.github.io/khoathpt/";
+  }
+</script>
+
+</body>
+</html>
